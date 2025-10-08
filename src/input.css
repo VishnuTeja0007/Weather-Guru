@@ -1,1 +1,102 @@
-@import 'tailwindcss'
+@import 'tailwindcss';
+
+
+*{
+    box-sizing: border-box;
+
+}
+
+/* Import a modern font for better UI appearance */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+/* Apply basic styling to the page body for context */
+
+
+
+.search-container {
+    width: 100%;
+    max-width: 400px; /* Constraints for a mobile view */
+    margin: 0 auto;
+}
+
+/* The Main Search Input Bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: white; /* Slightly lighter than the background */
+    border-radius: 12px;
+    padding: 12px 15px;
+    box-shadow: 0 4px 6px rgba(124, 121, 121, 0.2); /* Subtle elevation */
+    margin-bottom: 10px;
+}
+
+.search-icon {
+    width: 20px;
+    height: 20px;
+    color: black; /* Light gray icon color */
+    margin-right: 10px;
+}
+
+.search-input {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    color: #f0f0f0;
+    font-size: 16px;
+    outline: none;
+    padding: 0;
+}
+
+/* Custom placeholder color */
+.search-input::placeholder {
+    color: #999999;
+}
+
+/* The 'Use Current Location' Button */
+.location-button {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: #4A90E2; /* A nice blue for interaction */
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.location-button:hover {
+    color: #6aacef;
+}
+
+.location-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+}
+
+.background{
+    position: relative;
+  
+        background-color: rgba(0, 0, 0, 0.3); /* Black with 50% opacity */
+      
+}
+
+.background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url(./assets/image.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 1; /* Adjust this value (0.1 to 1) to control darkness */
+    z-index: -1;
+}
+.weather-container{
+    background: transparent;
+    backdrop-filter: blur(10px);
+}
