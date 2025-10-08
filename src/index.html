@@ -9,548 +9,328 @@
 </head>
 
 <body>
-    <section class="navbar  w-full  h-[50px] flex items-center justify-center">
-        <div class="logo text-2xl font-bold">
-            <h1>Weather Guru</h1>
+    <!-- Navbar -->
+    <section class="navbar w-full h-[60px] md:h-[70px] flex items-center justify-between sm:justify-around px-4 md:px-8 lg:px-12 bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-50 gap-4 md:gap-8">
+        <div class="logo text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+            <h1 class="text-nowrap">Weather Guru</h1>
         </div>
-    </section>
-    <section class="search-container w-full h-auto flex flex-col items-center justify-center">
-        <div class="search-bar w-[90vw] mx-2.5">
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
+        <!-- Search Bar -->
+         <div class="search-bar-container w-full flex flex-row items-center justify-end gap-4  relative">
+        <div class="search-bar hidden sm:w-[50%] md:w-[60%]  max-w-[60%] h-full relative">
+            <svg class="search-icon absolute left-8 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <input type="text" placeholder="Enter city or ZIP code..." class="search-input">
+            <input type="text" id="citySearch" placeholder="Enter city or ZIP code..." class="w-full pl-12 pr-4 py-3 md:py-4  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base ">
+            <!-- <button type="submit" class="w-auto flex items-center justify-center absolute right-8 gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full text-sm md:text-base font-medium hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105" >submit</button> -->
+       
         </div>
-        <div class="btn-group flex items-center justify-around">
-            <button class="location-button ">
-                <svg class="location-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
+        
+        <!-- Location Button -->
+        <div class="flex justify-center locationButton-container ">
+            <button id="locationButton" class="location-button flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full text-sm md:text-base font-medium hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"></path>
                     <circle cx="12" cy="10" r="3"></circle>
                 </svg>
-                Use Current Location
-            </button>
-            <button class="location-button ">
-                <svg class="location-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"></path>
-                    <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-                Use Current Location
+                <span class="whitespace-nowrap">Use Current Location</span>
             </button>
         </div>
+    </div>
+        <!-- Search Toggle Button -->
+        <button id="searchToggle" class="search-toggle-btn hidden  p-3 rounded-full hover:bg-blue-50 transition-colors duration-200 group">
+            <svg class="w-6 h-6 md:w-7 md:h-7 text-blue-600 group-hover:text-blue-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+        </button>
+    </section>
+
+    <!-- Search Section (Hidden by default) -->
+    <section id="searchSection" class="search-container w-full h-0 overflow-hidden flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white transition-all duration-300 ease-in-out opacity-0">
+        <div class="w-full max-w-4xl px-4 py-6 space-y-4">
+            <!-- Close Button -->
+            <div class="flex justify-end">
+                <button id="closeSearch" class="p-2 rounded-full hover:bg-red-50 transition-colors duration-200 group">
+                    <svg class="w-6 h-6 text-gray-600 group-hover:text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-bar w-full relative">
+                <svg class="search-icon absolute left-8 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="citySearch" placeholder="Enter city or ZIP code..." class="w-full pl-12 pr-4 py-3 md:py-4 rounded-full border-2 border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base shadow-md">
+                <!-- <button type="submit" class="w-auto flex items-center justify-center absolute right-8 gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full text-sm md:text-base font-medium hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105" >submit</button> -->
+           
+            </div>
+            
+            <!-- Location Button -->
+            <div class="flex justify-center">
+                <button id="locationButton" class="location-button w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full text-sm md:text-base font-medium hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <span class="whitespace-nowrap">Use Current Location</span>
+                </button>
+            </div>
         </div>
     </section>
 
-    <main class="main w-[100vw] h-[600px]">
-        <div class="background w-full h-full">
-            <div
-                class="weather-container flex flex-col items-center justify-around gap-4 relative top-8 left-[5%] right-[5%] w-[90%] h-[auto]  p-7 ">
-                <div class="location-details flex relative w-full h-[20px] items-center justify-start ">
-                    <h1 class="text-sm absolute left-0 text-nowrap">London, United Kingdom</h1>
-                    <h2 class="text-[10px] absolute right-0">updated at now</h2>
-                </div>
-                <div class="main-weather-card relative w-full h-full flex flex-row items-center justify-start  ">
-                    <div class="weather-icon w-[50px] h-[50px] absolute left-2">
-                        <img src="./assets/icons/sun.png" alt="">
-                    </div>
-                    <div class="weather-details relative left-[80px]">
-                        <h1 class="text-4xl">25°C</h1>
-                        <h2 class="text-xl">Sunny</h2>
-                    </div>
-                    <button
-                        class="absolute right-2.5 bg-blue-50 hover:bg-blue-100 text-blue-600 text-sm font-medium px-3 py-1.5 rounded-full border border-blue-100 transition-all duration-200 hover:shadow-sm active:scale-95">
-                        °C to °F
-                    </button>
+    <!-- Main Content -->
+    <main class="main w-full min-h-screen pb-8 md:pb-12 lg:pb-20">
+        <div class="background w-full h-auto lg:h-[600px] xl:h-[650px]">
+            <div class="weather-container flex flex-col items-center gap-4 md:gap-6 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] xl:w-[70%] max-w-6xl mx-auto my-4 md:my-6 lg:my-8 p-4 sm:p-6 md:p-8 rounded-2xl">
+                <!-- Location and Update Time -->
+                <div class="location-details flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-1 sm:gap-0">
+                    <h1 class="text-base sm:text-lg md:text-xl font-semibold text-gray-800 truncate">London, United Kingdom</h1>
+                    <span class="text-xs sm:text-sm text-gray-500 whitespace-nowrap">Updated: Just now</span>
                 </div>
 
-                <div class="weather-conditions grid grid-cols-2 gap-4 p-4 text-gray-700">
+                <!-- Main Weather Card -->
+                <div class="main-weather-card relative w-full bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 md:p-8 shadow-md">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center w-full sm:w-auto">
+                            <div class="weather-icon w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24">
+                                <img src="./assets/icons/sun.png" alt="Sunny" class="w-full h-full object-contain">
+                            </div>
+                            <div class="weather-details ml-4 sm:ml-6">
+                                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-800">25°C</h1>
+                                <h2 class="text-xl sm:text-2xl md:text-3xl text-gray-600">Sunny</h2>
+                            </div>
+                        </div>
+                        <button class="w-full sm:w-auto bg-blue-50 hover:bg-blue-100 text-blue-600 text-sm sm:text-base font-medium px-4 py-2 md:px-5 md:py-2.5 rounded-full border border-blue-100 transition-all duration-200 hover:shadow-md active:scale-95 whitespace-nowrap">
+                            °C to °F
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Weather Conditions Grid -->
+                <div class="weather-conditions grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 w-full">
                     <!-- Wind -->
-                    <div
-                        class="bg-gray-50 p-3 rounded-lg shadow-sm flex flex-col items-center justify-start gap-1.5 text-left ">
-                        <h2 class="font-semibold mb-2 text-sm">Wind</h2>
-                        <p class="text-[10px]">Speed: 7.6 kph (4.7 mph)</p>
-                        <p class="text-[10px]">Direction: SW (231°)</p>
+                    <div class="bg-white/80 backdrop-blur-sm p-4 md:p-5 rounded-xl shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-200">
+                        <h2 class="font-semibold text-gray-700 mb-3 text-sm sm:text-base md:text-lg">🌬️ Wind</h2>
+                        <div class="xs:p-4">
+                            <p class="text-xs sm:text-sm text-gray-600 mb-1 ">Speed: <span class="font-medium">7.6 kph (4.7 mph)</span></p>
+                            <p class="text-xs sm:text-sm text-gray-600 mb-1">Direction: <span class="font-medium">SW (231°)</span></p>
+                        </div>
                     </div>
 
                     <!-- Atmospheric -->
-                    <div
-                        class="bg-gray-50 p-3 rounded-lg shadow-sm flex flex-col items-center justify-start gap-1.5 text-left">
-                        <h2 class="font-semibold mb-2 text-sm">Atmosphere</h2>
-                        <p class="text-[10px]">Pressure: 1024 mb</p>
-                        <p class="text-[10px]">Humidity: 94%</p>
-                        <p class="text-[10px]">Cloud Cover: 0%</p>
+                    <div class="bg-white/80 backdrop-blur-sm p-4 md:p-5 rounded-xl shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-200">
+                        <h2 class="font-semibold text-gray-700 mb-3 text-sm sm:text-base md:text-lg">🌡️ Atmosphere</h2>
+                        <div class="xs:p-4">
+                            <p class="text-xs sm:text-sm text-gray-600 mb-1">Pressure: <span class="font-medium">1024 mb</span></p>
+                            <p class="text-xs sm:text-sm text-gray-600 mb-1">Humidity: <span class="font-medium">94%</span></p>
+                            <p class="text-xs sm:text-sm text-gray-600 mb-1">Cloud Cover: <span class="font-medium">0%</span></p>
+                        </div>
                     </div>
 
                     <!-- Temperature -->
-                    <div
-                        class="bg-gray-50 p-3 rounded-lg shadow-sm flex flex-col items-center justify-start gap-1.5 text-left">
-                        <h2 class="font-semibold mb-2 text-sm">Temperature</h2>
-                        <p class="text-[10px]">Feels Like: 10.3°C</p>
-                        <p class="text-[10px]">Wind Chill: 12.2°C</p>
-                        <p class="text-[10px]">Heat Index: 12.7°C</p>
-                        <p class="text-[10px]">Dew Point: 10.5°C</p>
+                    <div class="bg-white/80 backdrop-blur-sm p-4 md:p-5 rounded-xl shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-200">
+                        <h2 class="font-semibold text-gray-700 mb-3 text-sm sm:text-base md:text-lg">🌡️ Temperature</h2>
+                        <div class="xs:p-4" >
+                            <p class="text-xs sm:text-sm text-gray-600  mb-1">Feels Like: <span class="font-medium">10.3°C</span></p>
+                            <p class="text-xs sm:text-sm text-gray-600 mb-1">Wind Chill: <span class="font-medium">12.2°C</span></p>
+                            <p class="text-xs sm:text-sm text-gray-600 mb-1">Heat Index: <span class="font-medium">12.7°C</span></p>
+                            <p class="text-xs sm:text-sm text-gray-600 mb-1">Dew Point: <span class="font-medium">10.5°C</span></p>
+                        </div>
                     </div>
 
                     <!-- Visibility -->
-                    <div
-                        class="bg-gray-50 p-3 rounded-lg shadow-sm flex flex-col items-center justify-start gap-1.5 text-left">
-                        <h2 class="font-semibold mb-2 text-sm">Visibility & Precipitation</h2>
-                        <p class="text-[10px]">Precipitation: 0.0 mm</p>
-                        <p class="text-[10px]">Visibility: 10 km (6 miles)</p>
-                    </div>
-                </div>
-
-
-
-            </div>
-        </div>
-        <section
-            class="daily-forecast bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-lg shadow-gray-300 p-6 m-4 transition-all hover:scale-[1.01] duration-300">
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-6 border-b pb-2">
-                <h2 class="text-lg font-semibold text-gray-800">Tuesday, 7 Oct 2025</h2>
-                <span class="text-sm text-gray-500">Sunny</span>
-            </div>
-
-            <!-- Content Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2">
-                <div class="forecast-day-container grid grid-cols-[2fr_3fr] md:grid-cols-2 gap-2 items-center mb-2">
-
-                    <!-- Left: Weather Image -->
-                    <div class="flex items-center justify-center bg-red-400 h-[150px]">
-                        <!-- <img src="./assets/icons/sun.png" alt="Sunny" class="w-24 h-24 drop-shadow-md" /> -->
-                    </div>
-
-                    <!-- Right: Weather Details -->
-                    <div class="main-weather-details relative left-2.5 space-y-2 text-gray-700">
-                        <h3 class="text-sm font-bold text-yellow-600">Temperature: 25°C</h3>
-                        <p class="text-[12px]">Max: 28°C | Min: 18°C</p>
-                        <p class="text-[12px]">Humidity: 70%</p>
-                        <p class="text-[12px]">Wind: 12 km/h SW</p>
-                        <p class="text-[12px]">UV Index: 0.6</p>
-                    </div>
-                </div>
-                <div class=" flex  justify-start items-center mt-4 mb-4">
-
-                    <!-- Right: Astro Details -->
-                    <div class="astro-details relative left-2.5 space-y-2 text-gray-700">
-
-                        <div class="status flex justify-between items-center">
-                            <h3 class="text-sm font-bold text-purple-600">🌅 Astro Details</h3>
-                            <h3>Night</h3>
+                    <div class="bg-white/80 backdrop-blur-sm p-4 md:p-5 rounded-xl shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-200">
+                        <h2 class="font-semibold text-gray-700 mb-3 text-sm sm:text-base md:text-lg">👁️ Visibility</h2>
+                        <div class="xs:p-4">
+                            <p class="text-xs sm:text-sm text-gray-600 mb-1">Precipitation: <span class="font-medium">0.0 mm</span></p>
+                            <p class="text-xs sm:text-sm text-gray-600 mb-1">Visibility: <span class="font-medium">10 km (6 miles)</span></p>
                         </div>
-                        <div class="text-[12px] grid grid-cols-2 gap-x-6 gap-y-2">
-                            <p>🌞 Sunrise: <span class="font-medium text-gray-800">07:11 AM</span></p>
-                            <p>🌇 Sunset: <span class="font-medium text-gray-800">06:24 PM</span></p>
-                            <p>🌝 Moonrise: <span class="font-medium text-gray-800">06:14 PM</span></p>
-                            <p>🌚 Moonset: <span class="font-medium text-gray-800">07:33 AM</span></p>
-                            <p>🌔 Phase: <span class="font-medium text-gray-800">Full Moon</span></p>
-                            <p>💡 Illumination: <span class="font-medium text-gray-800">100%</span></p>
-                        </div>
-
                     </div>
-
-
-
                 </div>
-            </div>
-            <div class="grid grid-cols-2  gap-2 mt-2">
-
-                <!-- 🌬️ Wind Info -->
-                <div
-                    class="bg-gradient-to-br from-blue-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-                    <h3 class="text-sm font-semibold text-blue-600 mb-2 text-nowrap">🌬️ Wind Info</h3>
-                    <p class="text-gray-700">Max Wind: <span class="font-medium">7.6 mph / 12.2 kph</span></p>
-                </div>
-
-                <!-- 💧 Precipitation -->
-                <div
-                    class="bg-gradient-to-br from-cyan-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-                    <h3 class="text-sm font-semibold text-cyan-600 mb-2 text-nowrap">💧 Precipitation</h3>
-                    <p class="text-gray-700">Rain: <span class="font-medium">0.0 mm / 0.0 in</span></p>
-                    <p class="text-gray-700">Snow: <span class="font-medium">0.0 cm</span></p>
-                </div>
-
-                <!-- 🌫️ Visibility -->
-                <div
-                    class="bg-gradient-to-br from-indigo-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-                    <h3 class="text-sm font-semibold text-indigo-600 mb-2 text-nowrap">🌫️ Visibility</h3>
-                    <p class="text-gray-700">Average Visibility: <span class="font-medium">10 km / 6 miles</span></p>
-                </div>
-
-                <!-- ☁️ Atmosphere -->
-                <div
-                    class="bg-gradient-to-br from-emerald-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-                    <h3 class="text-sm font-semibold text-emerald-600 mb-2 text-nowrap">☁️ Atmosphere</h3>
-                    <p class="text-gray-700">Humidity: <span class="font-medium">70%</span></p>
-                    <p class="text-gray-700">Chance of Rain: <span class="font-medium">0%</span></p>
-                    <p class="text-gray-700">Chance of Snow: <span class="font-medium">0%</span></p>
-                </div>
-
-            </div>
-            <div class="mt-2 p-2 ">
-                <h1>Summary: This day Going to be exciting with no clouds and no rain</h1>
-            </div>
-                
-        </section>
-        <section
-        class="daily-forecast bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-lg shadow-gray-300 p-6 m-4 transition-all hover:scale-[1.01] duration-300">
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-6 border-b pb-2">
-            <h2 class="text-lg font-semibold text-gray-800">Tuesday, 7 Oct 2025</h2>
-            <span class="text-sm text-gray-500">Sunny</span>
-        </div>
-
-        <!-- Content Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2">
-            <div class="forecast-day-container grid grid-cols-[2fr_3fr] md:grid-cols-2 gap-2 items-center mb-2">
-
-                <!-- Left: Weather Image -->
-                <div class="flex items-center justify-center bg-red-400 h-[150px]">
-                    <!-- <img src="./assets/icons/sun.png" alt="Sunny" class="w-24 h-24 drop-shadow-md" /> -->
-                </div>
-
-                <!-- Right: Weather Details -->
-                <div class="main-weather-details relative left-2.5 space-y-2 text-gray-700">
-                    <h3 class="text-sm font-bold text-yellow-600">Temperature: 25°C</h3>
-                    <p class="text-[12px]">Max: 28°C | Min: 18°C</p>
-                    <p class="text-[12px]">Humidity: 70%</p>
-                    <p class="text-[12px]">Wind: 12 km/h SW</p>
-                    <p class="text-[12px]">UV Index: 0.6</p>
-                </div>
-            </div>
-            <div class=" flex  justify-start items-center mt-4 mb-4">
-
-                <!-- Right: Astro Details -->
-                <div class="astro-details relative left-2.5 space-y-2 text-gray-700">
-
-                    <div class="status flex justify-between items-center">
-                        <h3 class="text-sm font-bold text-purple-600">🌅 Astro Details</h3>
-                        <h3>Night</h3>
-                    </div>
-                    <div class="text-[12px] grid grid-cols-2 gap-x-6 gap-y-2">
-                        <p>🌞 Sunrise: <span class="font-medium text-gray-800">07:11 AM</span></p>
-                        <p>🌇 Sunset: <span class="font-medium text-gray-800">06:24 PM</span></p>
-                        <p>🌝 Moonrise: <span class="font-medium text-gray-800">06:14 PM</span></p>
-                        <p>🌚 Moonset: <span class="font-medium text-gray-800">07:33 AM</span></p>
-                        <p>🌔 Phase: <span class="font-medium text-gray-800">Full Moon</span></p>
-                        <p>💡 Illumination: <span class="font-medium text-gray-800">100%</span></p>
-                    </div>
-
-                </div>
-
-
-
             </div>
         </div>
-        <div class="grid grid-cols-2  gap-2 mt-2">
+        <!-- Daily Forecast Cards -->
 
-            <!-- 🌬️ Wind Info -->
-            <div
-                class="bg-gradient-to-br from-blue-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-                <h3 class="text-sm font-semibold text-blue-600 mb-2 text-nowrap">🌬️ Wind Info</h3>
-                <p class="text-gray-700">Max Wind: <span class="font-medium">7.6 mph / 12.2 kph</span></p>
-            </div>
 
-            <!-- 💧 Precipitation -->
-            <div
-                class="bg-gradient-to-br from-cyan-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-                <h3 class="text-sm font-semibold text-cyan-600 mb-2 text-nowrap">💧 Precipitation</h3>
-                <p class="text-gray-700">Rain: <span class="font-medium">0.0 mm / 0.0 in</span></p>
-                <p class="text-gray-700">Snow: <span class="font-medium">0.0 cm</span></p>
-            </div>
-
-            <!-- 🌫️ Visibility -->
-            <div
-                class="bg-gradient-to-br from-indigo-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-                <h3 class="text-sm font-semibold text-indigo-600 mb-2 text-nowrap">🌫️ Visibility</h3>
-                <p class="text-gray-700">Average Visibility: <span class="font-medium">10 km / 6 miles</span></p>
-            </div>
-
-            <!-- ☁️ Atmosphere -->
-            <div
-                class="bg-gradient-to-br from-emerald-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-                <h3 class="text-sm font-semibold text-emerald-600 mb-2 text-nowrap">☁️ Atmosphere</h3>
-                <p class="text-gray-700">Humidity: <span class="font-medium">70%</span></p>
-                <p class="text-gray-700">Chance of Rain: <span class="font-medium">0%</span></p>
-                <p class="text-gray-700">Chance of Snow: <span class="font-medium">0%</span></p>
-            </div>
-
-        </div>
-        <div class="mt-2 p-2 ">
-            <h1>Summary: This day Going to be exciting with no clouds and no rain</h1>
-        </div>
+        <div class="w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] xl:w-[70%] max-w-full mx-auto space-y-4 md:space-y-6 lg:p-4">
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 px-2 sm:px-0">5-Day Forecast</h2>
             
-    </section>  <section
-    class="daily-forecast bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-lg shadow-gray-300 p-6 m-4 transition-all hover:scale-[1.01] duration-300">
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-6 border-b pb-2">
-        <h2 class="text-lg font-semibold text-gray-800">Tuesday, 7 Oct 2025</h2>
-        <span class="text-sm text-gray-500">Sunny</span>
-    </div>
-
-    <!-- Content Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2">
-        <div class="forecast-day-container grid grid-cols-[2fr_3fr] md:grid-cols-2 gap-2 items-center mb-2">
-
-            <!-- Left: Weather Image -->
-            <div class="flex items-center justify-center bg-red-400 h-[150px]">
-                <!-- <img src="./assets/icons/sun.png" alt="Sunny" class="w-24 h-24 drop-shadow-md" /> -->
-            </div>
-
-            <!-- Right: Weather Details -->
-            <div class="main-weather-details relative left-2.5 space-y-2 text-gray-700">
-                <h3 class="text-sm font-bold text-yellow-600">Temperature: 25°C</h3>
-                <p class="text-[12px]">Max: 28°C | Min: 18°C</p>
-                <p class="text-[12px]">Humidity: 70%</p>
-                <p class="text-[12px]">Wind: 12 km/h SW</p>
-                <p class="text-[12px]">UV Index: 0.6</p>
-            </div>
-        </div>
-        <div class=" flex  justify-start items-center mt-4 mb-4">
-
-            <!-- Right: Astro Details -->
-            <div class="astro-details relative left-2.5 space-y-2 text-gray-700">
-
-                <div class="status flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-purple-600">🌅 Astro Details</h3>
-                    <h3>Night</h3>
-                </div>
-                <div class="text-[12px] grid grid-cols-2 gap-x-6 gap-y-2">
-                    <p>🌞 Sunrise: <span class="font-medium text-gray-800">07:11 AM</span></p>
-                    <p>🌇 Sunset: <span class="font-medium text-gray-800">06:24 PM</span></p>
-                    <p>🌝 Moonrise: <span class="font-medium text-gray-800">06:14 PM</span></p>
-                    <p>🌚 Moonset: <span class="font-medium text-gray-800">07:33 AM</span></p>
-                    <p>🌔 Phase: <span class="font-medium text-gray-800">Full Moon</span></p>
-                    <p>💡 Illumination: <span class="font-medium text-gray-800">100%</span></p>
+            <section class="daily-forecast bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-lg shadow-gray-300 p-4 sm:p-6 md:p-8 transition-all hover:shadow-xl duration-300">
+                <!-- Header -->
+                 
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 border-b pb-3 md:pb-4 gap-2">
+                    <h2 class="text-lg md:text-xl font-semibold text-gray-800">Tuesday, 7 Oct 2025</h2>
+                    <span class="text-sm md:text-base text-gray-500 bg-yellow-100 px-3 py-1 rounded-full">☀️ Sunny</span>
                 </div>
 
-            </div>
+                <!-- Content Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                    <!-- Weather Image & Details -->
+                    <div class="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+                        <div class="flex items-center justify-center bg-gradient-to-br from-yellow-100 to-orange-100 rounded-2xl w-full sm:w-32 h-32 sm:h-32 flex-shrink-0">
+                            <img src="./assets/icons/sun.png" alt="Sunny" class="w-20 h-20 sm:w-24 sm:h-24 drop-shadow-md" />
+                        </div>
 
+                        <div class="main-weather-details space-y-2 text-gray-700 w-full">
+                            <h3 class="text-base md:text-lg font-bold text-yellow-600">Temperature: 25°C</h3>
+                            <div class="grid grid-cols-2 gap-2 text-xs sm:text-sm">
+                                <p>Max: <span class="font-medium">28°C</span></p>
+                                <p>Min: <span class="font-medium">18°C</span></p>
+                                <p>Humidity: <span class="font-medium">70%</span></p>
+                                <p>Wind: <span class="font-medium">12 km/h SW</span></p>
+                                <p class="col-span-2">UV Index: <span class="font-medium">0.6</span></p>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- Astro Details -->
+                    <div class="astro-details space-y-3 text-gray-700 bg-white/50 p-4 rounded-xl">
+                        <div class="status flex justify-between items-center border-b pb-2">
+                            <h3 class="text-sm md:text-base font-bold text-purple-600">🌅 Astro Details</h3>
+                            <span class="text-xs md:text-sm bg-indigo-100 px-2 py-1 rounded-full">🌙 Night</span>
+                        </div>
+                        <div class="text-xs sm:text-sm grid grid-cols-2 gap-x-4 gap-y-2">
+                            <p>🌞 Sunrise: <span class="font-medium text-gray-800 block sm:inline">07:11 AM</span></p>
+                            <p>🌇 Sunset: <span class="font-medium text-gray-800 block sm:inline">06:24 PM</span></p>
+                            <p>🌝 Moonrise: <span class="font-medium text-gray-800 block sm:inline">06:14 PM</span></p>
+                            <p>🌚 Moonset: <span class="font-medium text-gray-800 block sm:inline">07:33 AM</span></p>
+                            <p>🌔 Phase: <span class="font-medium text-gray-800 block sm:inline">Full Moon</span></p>
+                            <p>💡 Illumination: <span class="font-medium text-gray-800 block sm:inline">100%</span></p>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Additional Info Grid -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mt-4 md:mt-6">
+                    <!-- Wind Info -->
+                    <div class="bg-gradient-to-br from-blue-50 to-white shadow-md shadow-gray-200 rounded-xl p-3 md:p-4 hover:scale-[1.02] transition-transform">
+                        <h3 class="text-xs sm:text-sm font-semibold text-blue-600 mb-2">🌬️ Wind Info</h3>
+                        <p class="text-xs sm:text-sm text-gray-700">Max Wind: <span class="font-medium block sm:inline">7.6 mph / 12.2 kph</span></p>
+                    </div>
+
+                    <!-- Precipitation -->
+                    <div class="bg-gradient-to-br from-cyan-50 to-white shadow-md shadow-gray-200 rounded-xl p-3 md:p-4 hover:scale-[1.02] transition-transform">
+                        <h3 class="text-xs sm:text-sm font-semibold text-cyan-600 mb-2">💧 Precipitation</h3>
+                        <p class="text-xs sm:text-sm text-gray-700">Rain: <span class="font-medium">0.0 mm / 0.0 in</span></p>
+                        <p class="text-xs sm:text-sm text-gray-700">Snow: <span class="font-medium">0.0 cm</span></p>
+                    </div>
+
+                    <!-- Visibility -->
+                    <div class="bg-gradient-to-br from-indigo-50 to-white shadow-md shadow-gray-200 rounded-xl p-3 md:p-4 hover:scale-[1.02] transition-transform">
+                        <h3 class="text-xs sm:text-sm font-semibold text-indigo-600 mb-2">🌫️ Visibility</h3>
+                        <p class="text-xs sm:text-sm text-gray-700">Avg Visibility: <span class="font-medium block sm:inline">10 km / 6 miles</span></p>
+                    </div>
+
+                    <!-- Atmosphere -->
+                    <div class="bg-gradient-to-br from-emerald-50 to-white shadow-md shadow-gray-200 rounded-xl p-3 md:p-4 hover:scale-[1.02] transition-transform">
+                        <h3 class="text-xs sm:text-sm font-semibold text-emerald-600 mb-2">☁️ Atmosphere</h3>
+                        <p class="text-xs sm:text-sm text-gray-700">Humidity: <span class="font-medium">70%</span></p>
+                        <p class="text-xs sm:text-sm text-gray-700">Rain Chance: <span class="font-medium">0%</span></p>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="mt-4 md:mt-6 p-3 md:p-4 bg-blue-50 rounded-lg shadow-gray-400 shadow-sm border-blue-500">
+                    <p class="text-sm md:text-base text-gray-700"><span class="font-semibold">Summary:</span> This day is going to be exciting with no clouds and no rain</p>
+                </div>
+            </section>
         </div>
-    </div>
-    <div class="grid grid-cols-2  gap-2 mt-2">
-
-        <!-- 🌬️ Wind Info -->
-        <div
-            class="bg-gradient-to-br from-blue-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-            <h3 class="text-sm font-semibold text-blue-600 mb-2 text-nowrap">🌬️ Wind Info</h3>
-            <p class="text-gray-700">Max Wind: <span class="font-medium">7.6 mph / 12.2 kph</span></p>
-        </div>
-
-        <!-- 💧 Precipitation -->
-        <div
-            class="bg-gradient-to-br from-cyan-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-            <h3 class="text-sm font-semibold text-cyan-600 mb-2 text-nowrap">💧 Precipitation</h3>
-            <p class="text-gray-700">Rain: <span class="font-medium">0.0 mm / 0.0 in</span></p>
-            <p class="text-gray-700">Snow: <span class="font-medium">0.0 cm</span></p>
-        </div>
-
-        <!-- 🌫️ Visibility -->
-        <div
-            class="bg-gradient-to-br from-indigo-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-            <h3 class="text-sm font-semibold text-indigo-600 mb-2 text-nowrap">🌫️ Visibility</h3>
-            <p class="text-gray-700">Average Visibility: <span class="font-medium">10 km / 6 miles</span></p>
-        </div>
-
-        <!-- ☁️ Atmosphere -->
-        <div
-            class="bg-gradient-to-br from-emerald-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-            <h3 class="text-sm font-semibold text-emerald-600 mb-2 text-nowrap">☁️ Atmosphere</h3>
-            <p class="text-gray-700">Humidity: <span class="font-medium">70%</span></p>
-            <p class="text-gray-700">Chance of Rain: <span class="font-medium">0%</span></p>
-            <p class="text-gray-700">Chance of Snow: <span class="font-medium">0%</span></p>
-        </div>
-
-    </div>
-    <div class="mt-2 p-2 ">
-        <h1>Summary: This day Going to be exciting with no clouds and no rain</h1>
-    </div>
         
-</section>  <section
-class="daily-forecast bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-lg shadow-gray-300 p-6 m-4 transition-all hover:scale-[1.01] duration-300">
-<!-- Header -->
-<div class="flex items-center justify-between mb-6 border-b pb-2">
-    <h2 class="text-lg font-semibold text-gray-800">Tuesday, 7 Oct 2025</h2>
-    <span class="text-sm text-gray-500">Sunny</span>
-</div>
-
-<!-- Content Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2">
-    <div class="forecast-day-container grid grid-cols-[2fr_3fr] md:grid-cols-2 gap-2 items-center mb-2">
-
-        <!-- Left: Weather Image -->
-        <div class="flex items-center justify-center bg-red-400 h-[150px]">
-            <!-- <img src="./assets/icons/sun.png" alt="Sunny" class="w-24 h-24 drop-shadow-md" /> -->
-        </div>
-
-        <!-- Right: Weather Details -->
-        <div class="main-weather-details relative left-2.5 space-y-2 text-gray-700">
-            <h3 class="text-sm font-bold text-yellow-600">Temperature: 25°C</h3>
-            <p class="text-[12px]">Max: 28°C | Min: 18°C</p>
-            <p class="text-[12px]">Humidity: 70%</p>
-            <p class="text-[12px]">Wind: 12 km/h SW</p>
-            <p class="text-[12px]">UV Index: 0.6</p>
-        </div>
-    </div>
-    <div class=" flex  justify-start items-center mt-4 mb-4">
-
-        <!-- Right: Astro Details -->
-        <div class="astro-details relative left-2.5 space-y-2 text-gray-700">
-
-            <div class="status flex justify-between items-center">
-                <h3 class="text-sm font-bold text-purple-600">🌅 Astro Details</h3>
-                <h3>Night</h3>
-            </div>
-            <div class="text-[12px] grid grid-cols-2 gap-x-6 gap-y-2">
-                <p>🌞 Sunrise: <span class="font-medium text-gray-800">07:11 AM</span></p>
-                <p>🌇 Sunset: <span class="font-medium text-gray-800">06:24 PM</span></p>
-                <p>🌝 Moonrise: <span class="font-medium text-gray-800">06:14 PM</span></p>
-                <p>🌚 Moonset: <span class="font-medium text-gray-800">07:33 AM</span></p>
-                <p>🌔 Phase: <span class="font-medium text-gray-800">Full Moon</span></p>
-                <p>💡 Illumination: <span class="font-medium text-gray-800">100%</span></p>
-            </div>
-
-        </div>
-
-
-
-    </div>
-</div>
-<div class="grid grid-cols-2  gap-2 mt-2">
-
-    <!-- 🌬️ Wind Info -->
-    <div
-        class="bg-gradient-to-br from-blue-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-        <h3 class="text-sm font-semibold text-blue-600 mb-2 text-nowrap">🌬️ Wind Info</h3>
-        <p class="text-gray-700">Max Wind: <span class="font-medium">7.6 mph / 12.2 kph</span></p>
-    </div>
-
-    <!-- 💧 Precipitation -->
-    <div
-        class="bg-gradient-to-br from-cyan-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-        <h3 class="text-sm font-semibold text-cyan-600 mb-2 text-nowrap">💧 Precipitation</h3>
-        <p class="text-gray-700">Rain: <span class="font-medium">0.0 mm / 0.0 in</span></p>
-        <p class="text-gray-700">Snow: <span class="font-medium">0.0 cm</span></p>
-    </div>
-
-    <!-- 🌫️ Visibility -->
-    <div
-        class="bg-gradient-to-br from-indigo-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-        <h3 class="text-sm font-semibold text-indigo-600 mb-2 text-nowrap">🌫️ Visibility</h3>
-        <p class="text-gray-700">Average Visibility: <span class="font-medium">10 km / 6 miles</span></p>
-    </div>
-
-    <!-- ☁️ Atmosphere -->
-    <div
-        class="bg-gradient-to-br from-emerald-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-        <h3 class="text-sm font-semibold text-emerald-600 mb-2 text-nowrap">☁️ Atmosphere</h3>
-        <p class="text-gray-700">Humidity: <span class="font-medium">70%</span></p>
-        <p class="text-gray-700">Chance of Rain: <span class="font-medium">0%</span></p>
-        <p class="text-gray-700">Chance of Snow: <span class="font-medium">0%</span></p>
-    </div>
-
-</div>
-<div class="mt-2 p-2 ">
-    <h1>Summary: This day Going to be exciting with no clouds and no rain</h1>
-</div>
-    
-</section>  <section
-class="daily-forecast bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-lg shadow-gray-300 p-6 m-4 transition-all hover:scale-[1.01] duration-300">
-<!-- Header -->
-<div class="flex items-center justify-between mb-6 border-b pb-2">
-    <h2 class="text-lg font-semibold text-gray-800">Tuesday, 7 Oct 2025</h2>
-    <span class="text-sm text-gray-500">Sunny</span>
-</div>
-
-<!-- Content Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2">
-    <div class="forecast-day-container grid grid-cols-[2fr_3fr] md:grid-cols-2 gap-2 items-center mb-2">
-
-        <!-- Left: Weather Image -->
-        <div class="flex items-center justify-center bg-red-400 h-[150px]">
-            <!-- <img src="./assets/icons/sun.png" alt="Sunny" class="w-24 h-24 drop-shadow-md" /> -->
-        </div>
-
-        <!-- Right: Weather Details -->
-        <div class="main-weather-details relative left-2.5 space-y-2 text-gray-700">
-            <h3 class="text-sm font-bold text-yellow-600">Temperature: 25°C</h3>
-            <p class="text-[12px]">Max: 28°C | Min: 18°C</p>
-            <p class="text-[12px]">Humidity: 70%</p>
-            <p class="text-[12px]">Wind: 12 km/h SW</p>
-            <p class="text-[12px]">UV Index: 0.6</p>
-        </div>
-    </div>
-    <div class=" flex  justify-start items-center mt-4 mb-4">
-
-        <!-- Right: Astro Details -->
-        <div class="astro-details relative left-2.5 space-y-2 text-gray-700">
-
-            <div class="status flex justify-between items-center">
-                <h3 class="text-sm font-bold text-purple-600">🌅 Astro Details</h3>
-                <h3>Night</h3>
-            </div>
-            <div class="text-[12px] grid grid-cols-2 gap-x-6 gap-y-2">
-                <p>🌞 Sunrise: <span class="font-medium text-gray-800">07:11 AM</span></p>
-                <p>🌇 Sunset: <span class="font-medium text-gray-800">06:24 PM</span></p>
-                <p>🌝 Moonrise: <span class="font-medium text-gray-800">06:14 PM</span></p>
-                <p>🌚 Moonset: <span class="font-medium text-gray-800">07:33 AM</span></p>
-                <p>🌔 Phase: <span class="font-medium text-gray-800">Full Moon</span></p>
-                <p>💡 Illumination: <span class="font-medium text-gray-800">100%</span></p>
-            </div>
-
-        </div>
-
-
-
-    </div>
-</div>
-<div class="grid grid-cols-2  gap-2 mt-2">
-
-    <!-- 🌬️ Wind Info -->
-    <div
-        class="bg-gradient-to-br from-blue-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-        <h3 class="text-sm font-semibold text-blue-600 mb-2 text-nowrap">🌬️ Wind Info</h3>
-        <p class="text-gray-700">Max Wind: <span class="font-medium">7.6 mph / 12.2 kph</span></p>
-    </div>
-
-    <!-- 💧 Precipitation -->
-    <div
-        class="bg-gradient-to-br from-cyan-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-        <h3 class="text-sm font-semibold text-cyan-600 mb-2 text-nowrap">💧 Precipitation</h3>
-        <p class="text-gray-700">Rain: <span class="font-medium">0.0 mm / 0.0 in</span></p>
-        <p class="text-gray-700">Snow: <span class="font-medium">0.0 cm</span></p>
-    </div>
-
-    <!-- 🌫️ Visibility -->
-    <div
-        class="bg-gradient-to-br from-indigo-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-        <h3 class="text-sm font-semibold text-indigo-600 mb-2 text-nowrap">🌫️ Visibility</h3>
-        <p class="text-gray-700">Average Visibility: <span class="font-medium">10 km / 6 miles</span></p>
-    </div>
-
-    <!-- ☁️ Atmosphere -->
-    <div
-        class="bg-gradient-to-br from-emerald-50 to-white shadow-md shadow-gray-200 rounded-xl p-4 hover:scale-[1.02] transition-transform">
-        <h3 class="text-sm font-semibold text-emerald-600 mb-2 text-nowrap">☁️ Atmosphere</h3>
-        <p class="text-gray-700">Humidity: <span class="font-medium">70%</span></p>
-        <p class="text-gray-700">Chance of Rain: <span class="font-medium">0%</span></p>
-        <p class="text-gray-700">Chance of Snow: <span class="font-medium">0%</span></p>
-    </div>
-
-</div>
-<div class="mt-2 p-2 ">
-    <h1>Summary: This day Going to be exciting with no clouds and no rain</h1>
-</div>
-    
-</section>
     </main>
 
+    <!-- JavaScript for Search Toggle -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchToggle = document.getElementById('searchToggle');
+            const closeSearch = document.getElementById('closeSearch');
+            const searchSection = document.getElementById('searchSection');
+            const citySearch = document.getElementById('citySearch');
+            const locationButton = document.getElementById('locationButton');
+
+            // Toggle search section
+            searchToggle.addEventListener('click', function() {
+                toggleSearchSection(true);
+            });
+
+            // Close search section
+            closeSearch.addEventListener('click', function() {
+                toggleSearchSection(false);
+            });
+
+            // Function to toggle search section
+            function toggleSearchSection(show) {
+                if (show) {
+                    searchSection.classList.remove('h-0', 'opacity-0');
+                    searchSection.classList.add('h-auto', 'opacity-100', 'py-4');
+                    // Focus on search input
+                    setTimeout(() => {
+                        citySearch.focus();
+                    }, 300);
+                } else {
+                    searchSection.classList.add('h-0', 'opacity-0');
+                    searchSection.classList.remove('h-auto', 'opacity-100', 'py-4');
+                    // Clear search input
+                    citySearch.value = '';
+                }
+            }
+
+            // Handle search input (Enter key)
+            citySearch.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const searchValue = citySearch.value.trim();
+                    if (searchValue) {
+                        console.log('Searching for:', searchValue);
+                        // Add your search logic here
+                        // For example: fetchWeatherData(searchValue);
+                        toggleSearchSection(false);
+                    }
+                }
+            });
+
+            // Handle location button click
+            locationButton.addEventListener('click', function() {
+                console.log('Getting current location...');
+                // Add your geolocation logic here
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            const lat = position.coords.latitude;
+                            const lon = position.coords.longitude;
+                            console.log('Location:', lat, lon);
+                            // Add your logic to fetch weather by coordinates
+                            // For example: fetchWeatherByCoords(lat, lon);
+                            toggleSearchSection(false);
+                        },
+                        function(error) {
+                            console.error('Error getting location:', error);
+                            alert('Unable to get your location. Please enable location services.');
+                        }
+                    );
+                } else {
+                    alert('Geolocation is not supported by your browser.');
+                }
+            });
+
+            // Close search section when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchSection.contains(e.target) && 
+                    !searchToggle.contains(e.target) && 
+                    searchSection.classList.contains('opacity-100')) {
+                    toggleSearchSection(false);
+                }
+            });
+
+            // Prevent closing when clicking inside search section
+            searchSection.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
 </body>
 
 </html>

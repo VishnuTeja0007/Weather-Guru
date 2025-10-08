@@ -18,7 +18,9 @@
     max-width: 400px; /* Constraints for a mobile view */
     margin: 0 auto;
 }
-
+@theme{
+    --breakpoint-xs:440px;
+}
 /* The Main Search Input Bar */
 .search-bar {
     display: flex;
@@ -29,7 +31,27 @@
     box-shadow: 0 4px 6px rgba(124, 121, 121, 0.2); /* Subtle elevation */
     margin-bottom: 10px;
 }
+.search-bar-container{
+    height: 100%;
+}
+.search-bar-container>.search-bar{
+    display: flex;
+    align-items: center;
+    background-color: white; /* Slightly lighter than the background */
+    border-radius: 12px;
+    padding: 12px 15px;
+    box-shadow: none;
+    margin:0 
+}
+@media screen and (max-width: 640px) {
+    .search-bar-container{
+        display: none;
+    }
+    .search-toggle-btn{
+        display: block;
 
+}
+}
 .search-icon {
     width: 20px;
     height: 20px;
