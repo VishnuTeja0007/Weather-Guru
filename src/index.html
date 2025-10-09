@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<!-- head tag for additional information like title, favicons, stylesheets, cdn, etc. -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Guru</title>
+    <link rel="icon" type="image/x-icon" href="./assets/icons/image-removebg-preview.png">
     <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 />
-
+    <!-- tailwind output css -->
     <link rel="stylesheet" href="output.css">
 </head>
 
 <body>
-    <!-- Navbar -->
+    <!-- Navbar for title, search bar, location button, and search toggle button -->
     <section class="navbar w-full h-[60px] md:h-[70px] flex items-center justify-between sm:justify-around px-4 md:px-8 lg:px-12 bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-50 gap-4 md:gap-8">
         <div class="logo text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
             <h1 class="text-nowrap">Weather Guru</h1>
@@ -28,8 +29,6 @@
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
             <input type="text" id="citySearch" placeholder="Enter city or ZIP code..." class="w-full pl-12 pr-4 py-3 md:py-4 border-1 border-gray-400 rounded-md  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base ">
-            <!-- <button type="submit" class="w-auto flex items-center justify-center absolute right-8 gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full text-sm md:text-base font-medium hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105" >submit</button> -->
-       
         </div>
         <div class="search-history hidden absolute top-[70px] bg-white w-full p-4 shadow-lg rounded-lg border border-gray-200 max-h-[300px] overflow-y-auto z-10">
             <ul class="search-history-list space-y-2">
@@ -78,8 +77,7 @@
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                     <input type="text" id="citySearch" placeholder="Enter city or ZIP code..." class="w-full pl-12 pr-4 py-3 md:py-4 rounded-full border-2 border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base shadow-md">
-                    <!-- <button type="submit" class="w-auto flex items-center justify-center absolute right-8 gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full text-sm md:text-base font-medium hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105" >submit</button> -->
-                </div>
+                 </div>
                 <!-- Mobile Search History -->
                 <div class="search-history-mobile hidden absolute top-[70px] bg-white w-full p-4 shadow-lg rounded-lg border border-gray-200 max-h-[300px] overflow-y-auto z-10">
                     <ul class="search-history-list-mobile space-y-2">
@@ -100,7 +98,7 @@
         </div>
     </section>
 
-    <!-- Loading Screen -->
+    <!-- Loading Screen  only visible when data is fetching -->
     <div id="loadingScreen" class="fixed inset-0 bg-white/95 backdrop-blur-sm z-50 hidden">
         <div class="flex items-center justify-center h-full w-full">
         <div class="flex flex-col items-center gap-6">
@@ -129,10 +127,12 @@
         </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Content  where weather details are displayed -->
+
     <section class="error-message hidden p-10 mx-auto  absolute top-[300px] left-[30%] right-[30%] bg-white  z-10 flex flex-col items-center justify-center gap-6 rounded-4xl shadow-2xs  w-[40%] h-[400px]" >
-        
+     <!-- error or any info popups hidden default triggerd with errors like invalid inputs, api errors  -->
     </section>
+    <!-- main content section  where weather details are displayed -->
     <main class="main w-full min-h-screen pb-8 md:pb-12 lg:pb-20">
         <div class="background w-full h-auto lg:h-[600px] xl:h-[650px]">
             <div class="weather-container flex flex-col items-center gap-4 md:gap-6 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] xl:w-[70%] max-w-6xl mx-auto mb-2  md:my-6 md:mt-0 lg:my-8 p-4 sm:p-6 md:p-8 rounded-2xl">
@@ -208,6 +208,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- daily forecast cards  where 5 days of forecast are displayed -->
         <!-- Daily Forecast Cards -->
 
 
@@ -313,8 +315,7 @@
         </div>
         
     </main>
-
-    <!-- JavaScript for Search Toggle -->
+    <!-- script tag for javascript file used at last to prioritize loading of page -->
     <script src="./index.js"></script>
 </body>
 

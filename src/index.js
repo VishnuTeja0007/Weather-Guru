@@ -1,8 +1,21 @@
-
+// api url and key for weatherapi constants used in this file
 const url = "http://api.weatherapi.com/v1"
 const api_key = "159ab6317b3f4a6b84c13820250710"
-
+//for popup visibility
 let isPopupVisible = false
+
+// empty objects for weather current and forecast
+let weatherCurrent = {}
+let weatherForecast = {}
+//for celicius to fahrenheit conversion button 
+
+let isCelicius = true;
+
+//queries to collect and store in sessionStorage
+
+const queries = []
+
+//! functions start here
 
 function handlePopup(message, Description) {
     const popup = document.querySelector(".error-message")
@@ -50,9 +63,6 @@ async function getForecastWeather(query, days = 5) {
     return data
 }
 
-let weatherCurrent = {}
-let weatherForecast = {}
-let isCelicius = true;
 
 // Function to check for extreme temperatures and show warnings
 function checkTemperatureWarnings(weatherData) {
@@ -362,12 +372,14 @@ function displayForecast(forecastData) {
         }
     }
 }
-const queries = []
+
 
 function childAddition(parent, child) {
 
     parent.innerHTML = child
 }
+
+//here the document needs to be loaded to make sure all addEventlisteneres add
 
 document.addEventListener('DOMContentLoaded', function () {
     const searchToggle = document.getElementById('searchToggle');
@@ -443,6 +455,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // functions to dynamically show content
+    
     function showSearchHistory() {
         if (searchHistoryDiv) {
             displaySearchHistory(searchHistoryList);
