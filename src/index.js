@@ -17,49 +17,8 @@ async function getForecastWeather(query, days = 5){
 
 let weatherCurrent={}
 let weatherForecast={}
-
-class WeatherData {
-    constructor(data) {
-      const {
-          name,
-          region,
-          country,
-          lastUpdated,
-          tempC,
-        tempF,
-        condition,
-        icon,
-        wind,
-        atmosphere,
-        feelsLike,
-        windChill,
-        heatIndex,
-        dewPoint,
-        precipitation,
-        visibility,
-      } = data;
-  
-      this.temperature = { c: tempC, f: tempF };
-      this.location = { name, region, country, lastUpdated };
-      this.currentWeather = {
-        status: condition,
-        icon,
-        wind,
-        atmosphere,
-        temperature: { feelsLike, windChill, heatIndex, dewPoint },
-        visibility: { precipitation, value: visibility },
-      };
-    }
-  
-    // example method
-    summary() {
-      return `${this.location.name}: ${this.currentWeather.status}, ${this.temperature.c}°C`;
-    }
-  }
-
-// const weatherAtUser= new WeatherData(jsonObject.location.name,jsonObject.location.region,jsonObject.location.);
-  
 let isCelicius=true;
+
 function displayWeather(weather) {
     console.log("displayCalled", weather); // Log the full weather object to check its structure
     
@@ -317,18 +276,22 @@ function displayForecast(forecastData) {
         }
     }
 }
+const queries=[]
 
 function childAddition(parent,child){
+
     parent.innerHTML=child
 }
-
 
 document.addEventListener('DOMContentLoaded', function() {
     const searchToggle = document.getElementById('searchToggle');
     const closeSearch = document.getElementById('closeSearch');
     const searchSection = document.getElementById('searchSection');
     const loadingScreen = document.getElementById('loadingScreen');
-    
+    const searchHistoryDiv = document.querySelector('.search-history');
+    const searchHistoryList = document.querySelector('.search-history-list');
+    const searchHistoryDivMobile = document.querySelector('.search-history-mobile');
+    const searchHistoryListMobile = document.querySelector('.search-history-list-mobile');
     // Get ALL search inputs and location buttons using querySelectorAll
     const citySearchInputs = document.querySelectorAll('input[type="text"]#citySearch, input[placeholder*="city"]');
     const locationButtons = document.querySelectorAll('#locationButton, .location-button');
@@ -345,6 +308,78 @@ document.addEventListener('DOMContentLoaded', function() {
         if (loadingScreen) {
             loadingScreen.classList.add('hidden');
             console.log('Loading screen hidden');
+        }
+    }
+
+    // Search history functions
+    function displaySearchHistory(listElement) {
+        if (!listElement) return;
+        
+        // Get history from sessionStorage
+        const historyJSON = sessionStorage.getItem('history');
+        const history = historyJSON ? JSON.parse(historyJSON) : [];
+        
+        // Clear the list
+        listElement.innerHTML = '';
+        
+        if (history.length === 0) {
+            // Show default message when no history
+            const emptyLi = document.createElement('li');
+            emptyLi.className = 'text-gray-500 text-sm text-center py-2';
+            emptyLi.textContent = 'Search a city';
+            listElement.appendChild(emptyLi);
+        } else {
+            // Display history items (show last 10 items in reverse order - most recent first)
+            const recentHistory = history.slice(-10).reverse();
+            
+            recentHistory.forEach((city, index) => {
+                const li = document.createElement('li');
+                li.className = 'text-gray-700 text-sm py-2 px-3 hover:bg-blue-50 rounded-md cursor-pointer transition-colors duration-200 flex items-center gap-2';
+                
+                // Add clock icon
+                li.innerHTML = `
+                    <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>${city}</span>
+                `;
+                
+                // Add click event to search for this city
+                li.addEventListener('click', function() {
+                    handleSearch(city);
+                    hideSearchHistory();
+                    hideSearchHistoryMobile();
+                });
+                
+                listElement.appendChild(li);
+            });
+        }
+    }
+
+    function showSearchHistory() {
+        if (searchHistoryDiv) {
+            displaySearchHistory(searchHistoryList);
+            searchHistoryDiv.classList.remove('hidden');
+        }
+    }
+
+    function hideSearchHistory() {
+        if (searchHistoryDiv) {
+            searchHistoryDiv.classList.add('hidden');
+        }
+    }
+
+    function showSearchHistoryMobile() {
+        if (searchHistoryDivMobile) {
+            displaySearchHistory(searchHistoryListMobile);
+            searchHistoryDivMobile.classList.remove('hidden');
+        }
+    }
+
+    function hideSearchHistoryMobile() {
+        if (searchHistoryDivMobile) {
+            searchHistoryDivMobile.classList.add('hidden');
         }
     }
 
@@ -368,6 +403,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function toggleSearchSection(show) {
         if (!searchSection) return;
         
+        
         if (show) {
             searchSection.classList.remove('h-0', 'opacity-0');
             searchSection.classList.add('h-auto', 'opacity-100', 'py-4');
@@ -390,7 +426,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle search functionality
     async function handleSearch(searchValue) {
+        queries.push(searchValue)
+        sessionStorage.setItem('history',JSON.stringify(queries))
         if (!searchValue) return;
+
         
         console.log('Searching for:', searchValue);
         showLoading(); // Show loading screen
@@ -430,14 +469,41 @@ document.addEventListener('DOMContentLoaded', function() {
             hideLoading(); // Hide loading screen after data is fetched or error occurs
         }
     }
-
     // Add event listeners to ALL search inputs
     citySearchInputs.forEach((input, index) => {
+        // Determine if this input is in the mobile search section
+        const isMobileInput = input.closest('#searchSection') !== null;
+        
+        // Show history on focus
+        input.addEventListener('focus', function() {
+            console.log(`Search input ${index + 1} - focused (${isMobileInput ? 'mobile' : 'desktop'})`);
+            if (isMobileInput) {
+                showSearchHistoryMobile();
+            } else {
+                showSearchHistory();
+            }
+        });
+
+        // Hide history on blur (with a small delay to allow clicking on history items)
+        input.addEventListener('blur', function() {
+            console.log(`Search input ${index + 1} - blurred (${isMobileInput ? 'mobile' : 'desktop'})`);
+            setTimeout(() => {
+                if (isMobileInput) {
+                    hideSearchHistoryMobile();
+                } else {
+                    hideSearchHistory();
+                }
+            }, 200);
+        });
+
+        // Handle Enter key press
         input.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const searchValue = this.value.trim();
-                this.value=""
-                console.log(`Search input ${index + 1} - Enter pressed`);
+                this.value = "";
+                console.log(`Search input ${index + 1} - Enter pressed (${isMobileInput ? 'mobile' : 'desktop'})`);
+                hideSearchHistory();
+                hideSearchHistoryMobile();
                 handleSearch(searchValue);
             }
         });
@@ -520,12 +586,40 @@ document.addEventListener('DOMContentLoaded', function() {
             searchSection.classList.contains('opacity-100')) {
             toggleSearchSection(false);
         }
+
+        // Hide desktop search history when clicking outside
+        if (searchHistoryDiv && 
+            !searchHistoryDiv.contains(e.target) && 
+            !Array.from(citySearchInputs).some(input => !input.closest('#searchSection') && input.contains(e.target))) {
+            hideSearchHistory();
+        }
+
+        // Hide mobile search history when clicking outside
+        if (searchHistoryDivMobile && 
+            !searchHistoryDivMobile.contains(e.target) && 
+            !Array.from(citySearchInputs).some(input => input.closest('#searchSection') && input.contains(e.target))) {
+            hideSearchHistoryMobile();
+        }
     });
 
     // Prevent closing when clicking inside search section
     if (searchSection) {
         searchSection.addEventListener('click', function(e) {
             e.stopPropagation();
+        });
+    }
+
+    // Prevent desktop search history from closing when clicking inside it
+    if (searchHistoryDiv) {
+        searchHistoryDiv.addEventListener('mousedown', function(e) {
+            e.preventDefault(); // Prevent input blur when clicking history
+        });
+    }
+
+    // Prevent mobile search history from closing when clicking inside it
+    if (searchHistoryDivMobile) {
+        searchHistoryDivMobile.addEventListener('mousedown', function(e) {
+            e.preventDefault(); // Prevent input blur when clicking history
         });
     }
     document.getElementById("cToF").addEventListener('click',()=>{

@@ -26,9 +26,9 @@
     display: flex;
     align-items: center;
     background-color: white; /* Slightly lighter than the background */
-    border-radius: 12px;
+    /* border-radius: 12px; */
     padding: 12px 15px;
-    box-shadow: 0 4px 6px rgba(124, 121, 121, 0.2); /* Subtle elevation */
+    /* box-shadow: 0 4px 6px rgba(124, 121, 121, 0.2);  */
     margin-bottom: 10px;
 }
 .search-bar-container{
@@ -55,7 +55,7 @@
 .search-icon {
     width: 20px;
     height: 20px;
-    color: black; /* Light gray icon color */
+    color: black; 
     margin-right: 10px;
 }
 
