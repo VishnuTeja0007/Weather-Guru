@@ -100,11 +100,14 @@
 
 .background{
     position: relative;
-  
-        background-color: rgba(0, 0, 0, 0.3); /* Black with 50% opacity */
-      
+    background-color: rgba(0, 0, 0, 0.3); /* Black with 30% opacity */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 0.5s ease-in-out;
 }
 
+/* Default background image */
 .background::before {
     content: '';
     position: absolute;
@@ -112,11 +115,13 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url(./assets/image.png);
+    background-image: url(./assets/sunny.jpg);
     background-repeat: no-repeat;
     background-size: cover;
-    opacity: 1; /* Adjust this value (0.1 to 1) to control darkness */
+    background-position: center;
+    opacity: 1;
     z-index: -1;
+    transition: background-image 0.5s ease-in-out;
 }
 .weather-container{
     background: transparent;

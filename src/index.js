@@ -1,27 +1,62 @@
 
-const url="http://api.weatherapi.com/v1"
-const api_key="159ab6317b3f4a6b84c13820250710"
+const url = "http://api.weatherapi.com/v1"
+const api_key = "159ab6317b3f4a6b84c13820250710"
 
-async function getCurrentWeather(query){
-    const response=await fetch(`${url}/current.json?key=${api_key}&q=${query}`)
-    const data=await response.json()
+let isPopupVisible = false
+const popup = document.querySelector(".error-message")
+
+function handlePopup(message, Description) {
+    if (!isPopupVisible) {
+        popup.classList.remove('hidden')
+        popup.innerHTML = `
+        <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #ff0000; "></i>
+        <h1>Error ${message}</h1>
+        <p>${Description}</p>
+        <button class="p-3 bg-red-700 rounded-md text-white" id="close-popup">Close</button>`
+        isPopupVisible = true
+        const closePopUpButton = document.querySelector('#close-popup')
+        closePopUpButton.addEventListener('click', () => {
+            popup.classList.add('hidden')
+            isPopupVisible = false
+
+        })
+    }
+    else {
+        console.log("error handling display")
+    }
+
+}
+
+async function getCurrentWeather(query) {
+    const response = await fetch(`${url}/current.json?key=${api_key}&q=${query}`)
+    const data = await response.json()
     // console.log(data)
     return data
 }
-async function getForecastWeather(query, days = 5){
+async function getForecastWeather(query, days = 5) {
     const response = await fetch(`${url}/forecast.json?key=${api_key}&q=${query}&days=${days}`)
     const data = await response.json()
     console.log("forecast data", data)
     return data
 }
 
-let weatherCurrent={}
-let weatherForecast={}
-let isCelicius=true;
+let weatherCurrent = {}
+let weatherForecast = {}
+let isCelicius = true;
+
+// Helper function to get background image based on weather condition
+const getBackgroundImage = (conditionText) => {
+    const text = conditionText.toLowerCase();
+    if (text.includes('sunny') || text.includes('clear')) return './assets/sunny.jpg';
+    if (text.includes('cloudy') || text.includes('overcast') || text.includes('partly cloudy')) return './assets/cloudy.jpg';
+    if (text.includes('rain') || text.includes('drizzle') || text.includes('thunder') || text.includes('storm')) return './assets/rainy.jpg';
+    if (text.includes('snow') || text.includes('ice') || text.includes('freezing')) return './assets/winter.png';
+    return './assets/sunny.jpg'; // Default to sunny
+};
 
 function displayWeather(weather) {
     console.log("displayCalled", weather); // Log the full weather object to check its structure
-    
+
     if (!weather || !weather.current || !weather.location) {
         console.error("Invalid weather data format", weather);
         return;
@@ -42,7 +77,7 @@ function displayWeather(weather) {
         },
         icon: {
             parent: document.querySelector(".weather-icon"),
-            child: current.condition?.icon 
+            child: current.condition?.icon
                 ? `<img src="https:${current.condition.icon}" alt="${current.condition.text || 'weather icon'}" class="w-full h-full object-contain">`
                 : '<div class="text-gray-500">No icon available</div>'
         },
@@ -97,7 +132,7 @@ function displayWeather(weather) {
                         Visibility: ${isCelicius ? (current.vis_km + " km") : (current.vis_miles + " miles")}
                     </p>`
         }
-    };      
+    };
 
     for (const key in parentChildObject) {
         const item = parentChildObject[key];
@@ -107,26 +142,40 @@ function displayWeather(weather) {
             console.warn(`Parent element not found for key: ${key}`);
         }
     }
+
+    // Change background based on weather condition
+    if (current.condition?.text) {
+        const backgroundImage = getBackgroundImage(current.condition.text);
+        const mainBackground = document.querySelector('.background');
+        if (mainBackground) {
+            mainBackground.style.backgroundImage = `url('${backgroundImage}')`;
+            mainBackground.style.backgroundSize = 'cover';
+            mainBackground.style.backgroundPosition = 'center';
+            mainBackground.style.backgroundRepeat = 'no-repeat';
+        }
+    }
 }
 
 function displayForecast(forecastData) {
     console.log("displayForecast called", forecastData);
-    const parent=document.querySelector(".forecast-parent-container")
-    const sibling=document.querySelector("#forecastContainer")
+    const parent = document.querySelector(".forecast-parent-container")
+    const sibling = document.querySelector("#forecastContainer")
     // const wchild=`<h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 px-2 sm:px-0">5-Day Forecast</h2> `
-    const child=document.createElement('h2')
+
+    const child = document.createElement('h2')
     child.classList.add(...("text-xl md:text-2xl font-bold text-gray-800 mb-4 px-2 sm:px-0".split(" ")))
-    child.innerText="5-Day Forecast"
-                
-    parent.insertBefore(child,sibling)
-    
+    child.innerText = "5-Day Forecast"
+    console.log(parent.innerText);
+    parent.insertBefore(child, sibling)
+
+
     if (!forecastData || !forecastData.forecast || !forecastData.forecast.forecastday) {
         console.error("Invalid forecast data format", forecastData);
         return;
     }
 
     const forecastDays = forecastData.forecast.forecastday;
-    
+
     // Helper function to format date
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -147,16 +196,17 @@ function displayForecast(forecastData) {
         return '🌤️';
     };
 
+
     // Process up to 5 days
     const daysToShow = Math.min(forecastDays.length, 5);
-    
+
     for (let i = 0; i < daysToShow; i++) {
         const day = forecastDays[i];
         const dayData = day.day;
         const astroData = day.astro;
-        
+
         const weatherEmoji = getWeatherEmoji(dayData.condition.text);
-        
+
         // Create parentChildObject for each forecast day
         const parentChildObject = {
             dayContainer: {
@@ -266,8 +316,8 @@ function displayForecast(forecastData) {
                 console.warn(`Parent element not found for key: ${key} (day ${i})`);
             }
         }
-    }   
-    
+    }
+
     // Hide any unused forecast day containers
     for (let i = daysToShow; i < 5; i++) {
         const dayContainer = document.querySelector(`.forecast-day-${i}`);
@@ -276,14 +326,14 @@ function displayForecast(forecastData) {
         }
     }
 }
-const queries=[]
+const queries = []
 
-function childAddition(parent,child){
+function childAddition(parent, child) {
 
-    parent.innerHTML=child
+    parent.innerHTML = child
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const searchToggle = document.getElementById('searchToggle');
     const closeSearch = document.getElementById('closeSearch');
     const searchSection = document.getElementById('searchSection');
@@ -314,14 +364,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Search history functions
     function displaySearchHistory(listElement) {
         if (!listElement) return;
-        
+
         // Get history from sessionStorage
         const historyJSON = sessionStorage.getItem('history');
         const history = historyJSON ? JSON.parse(historyJSON) : [];
-        
+
         // Clear the list
         listElement.innerHTML = '';
-        
+
         if (history.length === 0) {
             // Show default message when no history
             const emptyLi = document.createElement('li');
@@ -331,12 +381,12 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             // Display history items (show last 10 items in reverse order - most recent first)
             const recentHistory = history.slice(-10).reverse();
-            
+
             recentHistory.forEach((city, index) => {
                 const li = document.createElement('li');
                 li.className = 'text-gray-700 text-sm py-2 px-3 hover:bg-blue-50 rounded-md cursor-pointer transition-colors duration-200 flex items-center gap-2';
-                
-                // Add clock icon
+
+                // Add clock iconhandle
                 li.innerHTML = `
                     <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -344,14 +394,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     </svg>
                     <span>${city}</span>
                 `;
-                
+
                 // Add click event to search for this city
-                li.addEventListener('click', function() {
+                li.addEventListener('click', function () {
                     handleSearch(city);
                     hideSearchHistory();
                     hideSearchHistoryMobile();
                 });
-                
+
                 listElement.appendChild(li);
             });
         }
@@ -363,7 +413,6 @@ document.addEventListener('DOMContentLoaded', function() {
             searchHistoryDiv.classList.remove('hidden');
         }
     }
-
     function hideSearchHistory() {
         if (searchHistoryDiv) {
             searchHistoryDiv.classList.add('hidden');
@@ -385,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Toggle search section
     if (searchToggle) {
-        searchToggle.addEventListener('click', function() {
+        searchToggle.addEventListener('click', function () {
             toggleSearchSection(true);
             console.log("search toggle clicked");
         });
@@ -393,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Close search section
     if (closeSearch) {
-        closeSearch.addEventListener('click', function() {
+        closeSearch.addEventListener('click', function () {
             toggleSearchSection(false);
             console.log("x mark clicked");
         });
@@ -402,8 +451,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to toggle search section
     function toggleSearchSection(show) {
         if (!searchSection) return;
-        
-        
+
+
         if (show) {
             searchSection.classList.remove('h-0', 'opacity-0');
             searchSection.classList.add('h-auto', 'opacity-100', 'py-4');
@@ -426,38 +475,42 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle search functionality
     async function handleSearch(searchValue) {
-        queries.push(searchValue)
-        sessionStorage.setItem('history',JSON.stringify(queries))
-        if (!searchValue) return;
+        // Input validation - check for empty, whitespace-only, or invalid input
+        if (!searchValue || !searchValue.trim() || !/^[a-zA-Z0-9\s,.-]+$/.test(searchValue.trim())) {
+            handlePopup("Input Error", "Please enter a valid city name");
+            return;
+        }
 
-        
+        queries.push(searchValue);
+        sessionStorage.setItem('history', JSON.stringify(queries));
+
         console.log('Searching for:', searchValue);
         showLoading(); // Show loading screen
-        
+
         try {
             // Fetch both current weather and forecast data
             const [currentResult, forecastResult] = await Promise.all([
                 getCurrentWeather(searchValue),
                 getForecastWeather(searchValue, 5)
             ]);
-            
+
             console.log('Weather data:', currentResult);
             console.log('Forecast data:', forecastResult);
-            
+
             if (currentResult.error) {
                 throw new Error(currentResult.error.message || 'Failed to fetch weather data');
             }
-            
+
             if (forecastResult.error) {
                 throw new Error(forecastResult.error.message || 'Failed to fetch forecast data');
             }
-            
+
             weatherCurrent = currentResult;
             weatherForecast = forecastResult;
-            
+
             displayWeather(weatherCurrent);
             displayForecast(weatherForecast);
-            
+
             // Close toggle search section if open
             if (searchSection && searchSection.classList.contains('opacity-100')) {
                 toggleSearchSection(false);
@@ -473,9 +526,9 @@ document.addEventListener('DOMContentLoaded', function() {
     citySearchInputs.forEach((input, index) => {
         // Determine if this input is in the mobile search section
         const isMobileInput = input.closest('#searchSection') !== null;
-        
+
         // Show history on focus
-        input.addEventListener('focus', function() {
+        input.addEventListener('focus', function () {
             console.log(`Search input ${index + 1} - focused (${isMobileInput ? 'mobile' : 'desktop'})`);
             if (isMobileInput) {
                 showSearchHistoryMobile();
@@ -485,7 +538,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Hide history on blur (with a small delay to allow clicking on history items)
-        input.addEventListener('blur', function() {
+        input.addEventListener('blur', function () {
             console.log(`Search input ${index + 1} - blurred (${isMobileInput ? 'mobile' : 'desktop'})`);
             setTimeout(() => {
                 if (isMobileInput) {
@@ -497,7 +550,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Handle Enter key press
-        input.addEventListener('keypress', function(e) {
+        input.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 const searchValue = this.value.trim();
                 this.value = "";
@@ -514,10 +567,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const coordinates = [];
         console.log('Getting current location...');
         showLoading(); // Show loading screen
-        
+
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
-                async function(position) {
+                async function (position) {
                     try {
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
@@ -525,27 +578,27 @@ document.addEventListener('DOMContentLoaded', function() {
                         coordinates.push(lat, lon);
                         const query = coordinates.join(',');
                         console.log(query);
-                        
+
                         // Fetch both current weather and forecast data
                         const [currentResult, forecastResult] = await Promise.all([
                             getCurrentWeather(query),
                             getForecastWeather(query, 5)
                         ]);
-                        
+
                         if (currentResult.error) {
                             throw new Error(currentResult.error.message || 'Failed to fetch weather data');
                         }
-                        
+
                         if (forecastResult.error) {
                             throw new Error(forecastResult.error.message || 'Failed to fetch forecast data');
                         }
-                        
+
                         weatherCurrent = currentResult;
                         weatherForecast = forecastResult;
-                        
+
                         displayWeather(weatherCurrent);
                         displayForecast(weatherForecast);
-                        
+
                         // Close toggle search section if open
                         if (searchSection && searchSection.classList.contains('opacity-100')) {
                             toggleSearchSection(false);
@@ -557,7 +610,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         hideLoading(); // Hide loading screen
                     }
                 },
-                function(error) {
+                function (error) {
                     console.error('Error getting location:', error);
                     alert('Unable to get your location. Please enable location services.');
                     hideLoading(); // Hide loading screen on geolocation error
@@ -571,32 +624,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add event listeners to ALL location buttons
     locationButtons.forEach((button, index) => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             console.log(`Location button ${index + 1} clicked`);
             handleLocation();
         });
     });
 
     // Close search section when clicking outside
-    document.addEventListener('click', function(e) {
-        if (searchSection && 
-            !searchSection.contains(e.target) && 
-            searchToggle && 
-            !searchToggle.contains(e.target) && 
+    document.addEventListener('click', function (e) {
+        if (searchSection &&
+            !searchSection.contains(e.target) &&
+            searchToggle &&
+            !searchToggle.contains(e.target) &&
             searchSection.classList.contains('opacity-100')) {
             toggleSearchSection(false);
         }
 
         // Hide desktop search history when clicking outside
-        if (searchHistoryDiv && 
-            !searchHistoryDiv.contains(e.target) && 
+        if (searchHistoryDiv &&
+            !searchHistoryDiv.contains(e.target) &&
             !Array.from(citySearchInputs).some(input => !input.closest('#searchSection') && input.contains(e.target))) {
             hideSearchHistory();
         }
 
         // Hide mobile search history when clicking outside
-        if (searchHistoryDivMobile && 
-            !searchHistoryDivMobile.contains(e.target) && 
+        if (searchHistoryDivMobile &&
+            !searchHistoryDivMobile.contains(e.target) &&
             !Array.from(citySearchInputs).some(input => input.closest('#searchSection') && input.contains(e.target))) {
             hideSearchHistoryMobile();
         }
@@ -604,40 +657,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Prevent closing when clicking inside search section
     if (searchSection) {
-        searchSection.addEventListener('click', function(e) {
+        searchSection.addEventListener('click', function (e) {
             e.stopPropagation();
         });
     }
 
     // Prevent desktop search history from closing when clicking inside it
     if (searchHistoryDiv) {
-        searchHistoryDiv.addEventListener('mousedown', function(e) {
+        searchHistoryDiv.addEventListener('mousedown', function (e) {
             e.preventDefault(); // Prevent input blur when clicking history
         });
     }
 
     // Prevent mobile search history from closing when clicking inside it
     if (searchHistoryDivMobile) {
-        searchHistoryDivMobile.addEventListener('mousedown', function(e) {
+        searchHistoryDivMobile.addEventListener('mousedown', function (e) {
             e.preventDefault(); // Prevent input blur when clicking history
         });
     }
-    document.getElementById("cToF").addEventListener('click',()=>{
-        if(isCelicius){
-            isCelicius=false;
+    document.getElementById("cToF").addEventListener('click', () => {
+        if (isCelicius) {
+            isCelicius = false;
             displayWeather(weatherCurrent);
             if (weatherForecast && weatherForecast.forecast) {
                 displayForecast(weatherForecast);
             }
         }
-        else{
-            isCelicius=true;
+        else {
+            isCelicius = true;
             displayWeather(weatherCurrent);
             if (weatherForecast && weatherForecast.forecast) {
                 displayForecast(weatherForecast);
             }
         }
-        console.log("conversion triggered",isCelicius)
+        console.log("conversion triggered", isCelicius)
     })
     // displayWeather(jsonObject)
 });
