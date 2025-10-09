@@ -511,6 +511,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Handle search functionality
     async function handleSearch(searchValue) {
+        const welcome=document.querySelector(".welcome-tag")
+        welcome.remove()
         // Input validation - check for empty, whitespace-only, or invalid input
         if (!searchValue || !searchValue.trim() || !/^[a-zA-Z0-9\s,.-]+$/.test(searchValue.trim())) {
             handlePopup("Input Error", "Please enter a valid city name");
