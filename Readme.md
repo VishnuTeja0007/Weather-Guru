@@ -20,7 +20,7 @@ Search History: Keep track of previously searched locations
 6. Responsive Design
 
 ## Project Structure
-This project is a simple webpage using html, tailwind, vanilla css, js which is not very complex and can easily understood by looking at root directory . The root directory contains a folder Asssets and images folder inside of this for images organising. . The main code files are present in the root folder.
+This project is a simple webpage using html, tailwind, vanilla css, js which is not very complex and can easily understood by looking at root directory . The root directory contains a folder Asssets and images folder inside of this for images organising. . The main code files are present in the src folder.
 
 
 ## Installation
@@ -30,7 +30,6 @@ This project is a simple webpage using html, tailwind, vanilla css, js which is 
 2. initialise node package manger using npm init -y
 3. run npm install tailwindcss @tailwindcss/cli
 4. npx @tailwindcss/cli -i ./input.css -o ./output.css --watch
-
 ## Usage
 
 1. Development Server:
