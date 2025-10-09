@@ -152,6 +152,14 @@ function displayWeather(weather) {
 
 function displayForecast(forecastData) {
     console.log("displayForecast called", forecastData);
+    const parent=document.querySelector(".forecast-parent-container")
+    const sibling=document.querySelector("#forecastContainer")
+    // const wchild=`<h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 px-2 sm:px-0">5-Day Forecast</h2> `
+    const child=document.createElement('h2')
+    child.classList.add(...("text-xl md:text-2xl font-bold text-gray-800 mb-4 px-2 sm:px-0".split(" ")))
+    child.innerText="5-Day Forecast"
+                
+    parent.insertBefore(child,sibling)
     
     if (!forecastData || !forecastData.forecast || !forecastData.forecast.forecastday) {
         console.error("Invalid forecast data format", forecastData);
@@ -159,16 +167,7 @@ function displayForecast(forecastData) {
     }
 
     const forecastDays = forecastData.forecast.forecastday;
-    const forecastContainer = document.getElementById('forecastContainer');
     
-    if (!forecastContainer) {
-        console.error("Forecast container not found");
-        return;
-    }
-
-    // Clear existing forecast cards
-    forecastContainer.innerHTML = '';
-
     // Helper function to format date
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -189,7 +188,7 @@ function displayForecast(forecastData) {
         return '🌤️';
     };
 
-    // Create forecast cards for up to 5 days
+    // Process up to 5 days
     const daysToShow = Math.min(forecastDays.length, 5);
     
     for (let i = 0; i < daysToShow; i++) {
@@ -199,95 +198,123 @@ function displayForecast(forecastData) {
         
         const weatherEmoji = getWeatherEmoji(dayData.condition.text);
         
-        const forecastCard = `
-            <section class="daily-forecast bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-lg shadow-gray-300 p-4 sm:p-6 md:p-8 transition-all hover:shadow-xl duration-300">
-                <!-- Header -->
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 border-b pb-3 md:pb-4 gap-2">
-                    <h2 class="text-lg md:text-xl font-semibold text-gray-800">${formatDate(day.date)}</h2>
-                    <span class="text-sm md:text-base text-gray-500 bg-yellow-100 px-3 py-1 rounded-full">${weatherEmoji} ${dayData.condition.text}</span>
-                </div>
-
-                <!-- Content Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-                    <!-- Weather Image & Details -->
-                    <div class="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
-                        <div class="flex items-center justify-center bg-gradient-to-br from-yellow-100 to-orange-100 rounded-2xl w-full sm:w-32 h-32 sm:h-32 flex-shrink-0">
-                            <img src="https:${dayData.condition.icon}" alt="${dayData.condition.text}" class="w-20 h-20 sm:w-24 sm:h-24 drop-shadow-md" />
-                        </div>
-
-                        <div class="main-weather-details space-y-2 text-gray-700 w-full">
-                            <h3 class="text-base md:text-lg font-bold text-yellow-600">
-                                Temperature: ${isCelicius ? dayData.avgtemp_c : dayData.avgtemp_f}${isCelicius ? '°C' : '°F'}
-                            </h3>
-                            <div class="grid grid-cols-2 gap-2 text-xs sm:text-sm">
-                                <p>Max: <span class="font-medium">${isCelicius ? dayData.maxtemp_c : dayData.maxtemp_f}${isCelicius ? '°C' : '°F'}</span></p>
-                                <p>Min: <span class="font-medium">${isCelicius ? dayData.mintemp_c : dayData.mintemp_f}${isCelicius ? '°C' : '°F'}</span></p>
-                                <p>Humidity: <span class="font-medium">${dayData.avghumidity}%</span></p>
-                                <p>Wind: <span class="font-medium">${isCelicius ? dayData.maxwind_kph : dayData.maxwind_mph} ${isCelicius ? 'kph' : 'mph'}</span></p>
-                                <p class="col-span-2">UV Index: <span class="font-medium">${dayData.uv || 'N/A'}</span></p>
-                            </div>
-                        </div>
+        // Create parentChildObject for each forecast day
+        const parentChildObject = {
+            dayContainer: {
+                parent: document.querySelector(`.forecast-day-${i}`),
+                action: 'show' // Special action to show the hidden section
+            },
+            header: {
+                parent: document.querySelector(`.forecast-header-${i}`),
+                child: `
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 border-b pb-3 md:pb-4 gap-2">
+                        <h2 class="text-lg md:text-xl font-semibold text-gray-800">${formatDate(day.date)}</h2>
+                        <span class="text-sm md:text-base text-gray-500 bg-yellow-100 px-3 py-1 rounded-full">${weatherEmoji} ${dayData.condition.text}</span>
                     </div>
-
-                    <!-- Astro Details -->
-                    <div class="astro-details space-y-3 text-gray-700 bg-white/50 p-4 rounded-xl">
-                        <div class="status flex justify-between items-center border-b pb-2">
-                            <h3 class="text-sm md:text-base font-bold text-purple-600">🌅 Astro Details</h3>
-                            <span class="text-xs md:text-sm bg-indigo-100 px-2 py-1 rounded-full">🌙 ${astroData.moon_phase}</span>
-                        </div>
-                        <div class="text-xs sm:text-sm grid grid-cols-2 gap-x-4 gap-y-2">
-                            <p>🌞 Sunrise: <span class="font-medium text-gray-800 block sm:inline">${astroData.sunrise}</span></p>
-                            <p>🌇 Sunset: <span class="font-medium text-gray-800 block sm:inline">${astroData.sunset}</span></p>
-                            <p>🌝 Moonrise: <span class="font-medium text-gray-800 block sm:inline">${astroData.moonrise}</span></p>
-                            <p>🌚 Moonset: <span class="font-medium text-gray-800 block sm:inline">${astroData.moonset}</span></p>
-                            <p>🌔 Phase: <span class="font-medium text-gray-800 block sm:inline">${astroData.moon_phase}</span></p>
-                            <p>💡 Illumination: <span class="font-medium text-gray-800 block sm:inline">${astroData.moon_illumination}%</span></p>
-                        </div>
+                `
+            },
+            icon: {
+                parent: document.querySelector(`.forecast-icon-${i}`),
+                child: `<img src="https:${dayData.condition.icon}" alt="${dayData.condition.text}" class="w-20 h-20 sm:w-24 sm:h-24 drop-shadow-md" />`
+            },
+            mainDetails: {
+                parent: document.querySelector(`.forecast-main-details-${i}`),
+                child: `
+                    <h3 class="text-base md:text-lg font-bold text-yellow-600">
+                        Temperature: ${isCelicius ? dayData.avgtemp_c : dayData.avgtemp_f}${isCelicius ? '°C' : '°F'}
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2 text-xs sm:text-sm">
+                        <p>Max: <span class="font-medium">${isCelicius ? dayData.maxtemp_c : dayData.maxtemp_f}${isCelicius ? '°C' : '°F'}</span></p>
+                        <p>Min: <span class="font-medium">${isCelicius ? dayData.mintemp_c : dayData.mintemp_f}${isCelicius ? '°C' : '°F'}</span></p>
+                        <p>Humidity: <span class="font-medium">${dayData.avghumidity}%</span></p>
+                        <p>Wind: <span class="font-medium">${isCelicius ? dayData.maxwind_kph : dayData.maxwind_mph} ${isCelicius ? 'kph' : 'mph'}</span></p>
+                        <p class="col-span-2">UV Index: <span class="font-medium">${dayData.uv || 'N/A'}</span></p>
                     </div>
-                </div>
-
-                <!-- Additional Info Grid -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mt-4 md:mt-6">
-                    <!-- Wind Info -->
-                    <div class="bg-gradient-to-br from-blue-50 to-white shadow-md shadow-gray-200 rounded-xl p-3 md:p-4 hover:scale-[1.02] transition-transform">
-                        <h3 class="text-xs sm:text-sm font-semibold text-blue-600 mb-2">🌬️ Wind Info</h3>
-                        <p class="text-xs sm:text-sm text-gray-700">Max Wind: <span class="font-medium block sm:inline">${dayData.maxwind_mph} mph / ${dayData.maxwind_kph} kph</span></p>
+                `
+            },
+            astro: {
+                parent: document.querySelector(`.forecast-astro-${i}`),
+                child: `
+                    <div class="status flex justify-between items-center border-b pb-2">
+                        <h3 class="text-sm md:text-base font-bold text-purple-600">🌅 Astro Details</h3>
+                        <span class="text-xs md:text-sm bg-indigo-100 px-2 py-1 rounded-full">🌙 ${astroData.moon_phase}</span>
                     </div>
-
-                    <!-- Precipitation -->
-                    <div class="bg-gradient-to-br from-cyan-50 to-white shadow-md shadow-gray-200 rounded-xl p-3 md:p-4 hover:scale-[1.02] transition-transform">
-                        <h3 class="text-xs sm:text-sm font-semibold text-cyan-600 mb-2">💧 Precipitation</h3>
-                        <p class="text-xs sm:text-sm text-gray-700">Rain: <span class="font-medium">${dayData.totalprecip_mm} mm / ${dayData.totalprecip_in} in</span></p>
-                        <p class="text-xs sm:text-sm text-gray-700">Snow: <span class="font-medium">${dayData.totalsnow_cm} cm</span></p>
+                    <div class="text-xs sm:text-sm grid grid-cols-2 gap-x-4 gap-y-2">
+                        <p>🌞 Sunrise: <span class="font-medium text-gray-800 block sm:inline">${astroData.sunrise}</span></p>
+                        <p>🌇 Sunset: <span class="font-medium text-gray-800 block sm:inline">${astroData.sunset}</span></p>
+                        <p>🌝 Moonrise: <span class="font-medium text-gray-800 block sm:inline">${astroData.moonrise}</span></p>
+                        <p>🌚 Moonset: <span class="font-medium text-gray-800 block sm:inline">${astroData.moonset}</span></p>
+                        <p>🌔 Phase: <span class="font-medium text-gray-800 block sm:inline">${astroData.moon_phase}</span></p>
+                        <p>💡 Illumination: <span class="font-medium text-gray-800 block sm:inline">${astroData.moon_illumination}%</span></p>
                     </div>
-
-                    <!-- Visibility -->
-                    <div class="bg-gradient-to-br from-indigo-50 to-white shadow-md shadow-gray-200 rounded-xl p-3 md:p-4 hover:scale-[1.02] transition-transform">
-                        <h3 class="text-xs sm:text-sm font-semibold text-indigo-600 mb-2">🌫️ Visibility</h3>
-                        <p class="text-xs sm:text-sm text-gray-700">Avg Visibility: <span class="font-medium block sm:inline">${dayData.avgvis_km} km / ${dayData.avgvis_miles} miles</span></p>
-                    </div>
-
-                    <!-- Atmosphere -->
-                    <div class="bg-gradient-to-br from-emerald-50 to-white shadow-md shadow-gray-200 rounded-xl p-3 md:p-4 hover:scale-[1.02] transition-transform">
-                        <h3 class="text-xs sm:text-sm font-semibold text-emerald-600 mb-2">☁️ Atmosphere</h3>
-                        <p class="text-xs sm:text-sm text-gray-700">Humidity: <span class="font-medium">${dayData.avghumidity}%</span></p>
-                        <p class="text-xs sm:text-sm text-gray-700">Rain Chance: <span class="font-medium">${dayData.daily_chance_of_rain}%</span></p>
-                    </div>
-                </div>
-
-                <!-- Summary -->
-                <div class="mt-4 md:mt-6 p-3 md:p-4 bg-blue-50 rounded-lg shadow-gray-400 shadow-sm border-blue-500">
+                `
+            },
+            wind: {
+                parent: document.querySelector(`.forecast-wind-${i}`),
+                child: `
+                    <h3 class="text-xs sm:text-sm font-semibold text-blue-600 mb-2">🌬️ Wind Info</h3>
+                    <p class="text-xs sm:text-sm text-gray-700">Max Wind: <span class="font-medium block sm:inline">${dayData.maxwind_mph} mph / ${dayData.maxwind_kph} kph</span></p>
+                `
+            },
+            precipitation: {
+                parent: document.querySelector(`.forecast-precipitation-${i}`),
+                child: `
+                    <h3 class="text-xs sm:text-sm font-semibold text-cyan-600 mb-2">💧 Precipitation</h3>
+                    <p class="text-xs sm:text-sm text-gray-700">Rain: <span class="font-medium">${dayData.totalprecip_mm} mm / ${dayData.totalprecip_in} in</span></p>
+                    <p class="text-xs sm:text-sm text-gray-700">Snow: <span class="font-medium">${dayData.totalsnow_cm} cm</span></p>
+                `
+            },
+            visibility: {
+                parent: document.querySelector(`.forecast-visibility-${i}`),
+                child: `
+                    <h3 class="text-xs sm:text-sm font-semibold text-indigo-600 mb-2">🌫️ Visibility</h3>
+                    <p class="text-xs sm:text-sm text-gray-700">Avg Visibility: <span class="font-medium block sm:inline">${dayData.avgvis_km} km / ${dayData.avgvis_miles} miles</span></p>
+                `
+            },
+            atmosphere: {
+                parent: document.querySelector(`.forecast-atmosphere-${i}`),
+                child: `
+                    <h3 class="text-xs sm:text-sm font-semibold text-emerald-600 mb-2">☁️ Atmosphere</h3>
+                    <p class="text-xs sm:text-sm text-gray-700">Humidity: <span class="font-medium">${dayData.avghumidity}%</span></p>
+                    <p class="text-xs sm:text-sm text-gray-700">Rain Chance: <span class="font-medium">${dayData.daily_chance_of_rain}%</span></p>
+                `
+            },
+            summary: {
+                parent: document.querySelector(`.forecast-summary-${i}`),
+                child: `
                     <p class="text-sm md:text-base text-gray-700">
                         <span class="font-semibold">Summary:</span> 
                         ${dayData.daily_will_it_rain ? `Expect rain with ${dayData.daily_chance_of_rain}% chance. ` : 'No rain expected. '}
                         ${dayData.daily_will_it_snow ? `Snow expected. ` : ''}
                         Average temperature will be ${isCelicius ? dayData.avgtemp_c : dayData.avgtemp_f}${isCelicius ? '°C' : '°F'} with ${dayData.condition.text.toLowerCase()}.
                     </p>
-                </div>
-            </section>
-        `;
-        
-        forecastContainer.innerHTML += forecastCard;
+                `
+            }
+        };
+
+        // Loop through parentChildObject and add child to parent
+        for (const key in parentChildObject) {
+            const item = parentChildObject[key];
+            if (item.parent) {
+                if (item.action === 'show') {
+                    // Show the hidden forecast day container
+                    item.parent.classList.remove('hidden');
+                } else {
+                    // Use childAddition function to add content
+                    childAddition(item.parent, item.child);
+                }
+            } else {
+                console.warn(`Parent element not found for key: ${key} (day ${i})`);
+            }
+        }
+    }   
+    
+    // Hide any unused forecast day containers
+    for (let i = daysToShow; i < 5; i++) {
+        const dayContainer = document.querySelector(`.forecast-day-${i}`);
+        if (dayContainer) {
+            dayContainer.classList.add('hidden');
+        }
     }
 }
 
