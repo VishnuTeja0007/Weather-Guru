@@ -3,28 +3,38 @@ const url = "http://api.weatherapi.com/v1"
 const api_key = "159ab6317b3f4a6b84c13820250710"
 
 let isPopupVisible = false
-const popup = document.querySelector(".error-message")
 
 function handlePopup(message, Description) {
-    if (!isPopupVisible) {
-        popup.classList.remove('hidden')
-        popup.innerHTML = `
-        <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #ff0000; "></i>
-        <h1>Error ${message}</h1>
+    const popup = document.querySelector(".error-message")
+
+    // Safety check: ensure popup element exists
+    if (!popup) {
+        console.error('Error popup element not found in DOM');
+        return;
+    }
+
+    // If popup is already visible, close it first
+    if (isPopupVisible) {
+        popup.classList.add('hidden');
+    }
+
+    // Display the error popup
+    isPopupVisible = true;
+    popup.classList.remove('hidden');
+    popup.innerHTML = `
+        <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #ff0000;"></i>
+        <h1>Error: ${message}</h1>
         <p>${Description}</p>
-        <button class="p-3 bg-red-700 rounded-md text-white" id="close-popup">Close</button>`
-        isPopupVisible = true
-        const closePopUpButton = document.querySelector('#close-popup')
-        closePopUpButton.addEventListener('click', () => {
-            popup.classList.add('hidden')
-            isPopupVisible = false
+        <button class="p-3 bg-red-700 rounded-md text-white" id="close-popup">Close</button>`;
 
-        })
+    // Add event listener to close button
+    const closePopUpButton = popup.querySelector('#close-popup');
+    if (closePopUpButton) {
+        closePopUpButton.onclick = () => {
+            popup.classList.add('hidden');
+            isPopupVisible = false;
+        };
     }
-    else {
-        console.log("error handling display")
-    }
-
 }
 
 async function getCurrentWeather(query) {
@@ -43,6 +53,28 @@ async function getForecastWeather(query, days = 5) {
 let weatherCurrent = {}
 let weatherForecast = {}
 let isCelicius = true;
+
+// Function to check for extreme temperatures and show warnings
+function checkTemperatureWarnings(weatherData) {
+    if (!weatherData || !weatherData.current) {
+        return;
+    }
+
+    const tempC = weatherData.current.temp_c;
+    const location = weatherData.location?.name || 'your location';
+
+    if (tempC > 35) {
+        handlePopup(
+            'High Temperature Alert! 🌡️', 
+            `Temperature in ${location} is ${tempC}°C. It's very hot! Stay hydrated, avoid direct sunlight, and use sun protection.`
+        );
+    } else if (tempC < 20) {
+        handlePopup(
+            'Low Temperature Alert! ❄️', 
+            `Temperature in ${location} is ${tempC}°C. It's cold! Dress warmly and take precautions against the cold weather.`
+        );
+    }
+}
 
 // Helper function to get background image based on weather condition
 const getBackgroundImage = (conditionText) => {
@@ -510,6 +542,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             displayWeather(weatherCurrent);
             displayForecast(weatherForecast);
+            
+            // Check for temperature warnings
+            checkTemperatureWarnings(weatherCurrent);
 
             // Close toggle search section if open
             if (searchSection && searchSection.classList.contains('opacity-100')) {
@@ -517,7 +552,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         } catch (error) {
             console.error('Error fetching weather:', error);
-            alert(`Error: ${error.message}`);
+            handlePopup('Weather Data Error', error.message || 'Unable to fetch weather data. Please try again.');
         } finally {
             hideLoading(); // Hide loading screen after data is fetched or error occurs
         }
@@ -598,6 +633,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         displayWeather(weatherCurrent);
                         displayForecast(weatherForecast);
+                        
+                        // Check for temperature warnings
+                        checkTemperatureWarnings(weatherCurrent);
 
                         // Close toggle search section if open
                         if (searchSection && searchSection.classList.contains('opacity-100')) {
@@ -605,19 +643,36 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     } catch (error) {
                         console.error('Error fetching weather:', error);
-                        alert(`Error: ${error.message}`);
+                        handlePopup('Location Weather Error', error.message || 'Unable to fetch weather for your location.');
                     } finally {
                         hideLoading(); // Hide loading screen
                     }
                 },
                 function (error) {
                     console.error('Error getting location:', error);
-                    alert('Unable to get your location. Please enable location services.');
+                    let errorMessage = 'Unable to get your location.';
+                    
+                    // Provide specific error messages based on error code
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'Location access denied. Please enable location permissions in your browser settings.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'Location information is unavailable. Please try again.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'Location request timed out. Please try again.';
+                            break;
+                        default:
+                            errorMessage = 'An unknown error occurred while getting your location.';
+                    }
+                    
+                    handlePopup('Geolocation Error', errorMessage);
                     hideLoading(); // Hide loading screen on geolocation error
                 }
             );
         } else {
-            alert('Geolocation is not supported by your browser.');
+            handlePopup('Geolocation Not Supported', 'Your browser does not support geolocation. Please search for a city manually.');
             hideLoading(); // Hide loading screen
         }
     }
