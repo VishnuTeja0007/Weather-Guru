@@ -189,17 +189,21 @@ function displayWeather(weather) {
 }
 
 function displayForecast(forecastData) {
-    console.log("displayForecast called", forecastData);
-    const parent = document.querySelector(".forecast-parent-container")
-    const sibling = document.querySelector("#forecastContainer")
-    // const wchild=`<h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 px-2 sm:px-0">5-Day Forecast</h2> `
-
-    const child = document.createElement('h2')
-    child.classList.add(...("text-xl md:text-2xl font-bold text-gray-800 mb-4 px-2 sm:px-0".split(" ")))
-    child.innerText = "5-Day Forecast"
-    console.log(parent.innerText);
-    parent.insertBefore(child, sibling)
-
+    console.log("displayForecast called", !document.querySelector("#forecast-count"));
+    if(!document.querySelector("#forecast-count")){
+        const parent = document.querySelector(".forecast-parent-container")
+        const sibling = document.querySelector("#forecastContainer")
+        // const wchild=`<h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 px-2 sm:px-0">5-Day Forecast</h2> `
+    
+        const child = document.createElement('h2')
+        child.id="forecast-count"
+        child.classList.add(...("text-xl md:text-2xl font-bold text-gray-800 mb-4 px-2 sm:px-0".split(" ")))
+        child.innerText = "5-Day Forecast"
+        console.log(parent.innerText);
+        parent.insertBefore(child, sibling)
+    
+    }
+    
 
     if (!forecastData || !forecastData.forecast || !forecastData.forecast.forecastday) {
         console.error("Invalid forecast data format", forecastData);
@@ -599,6 +603,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Handle location functionality
     function handleLocation() {
+        const parent=document.querySelector(".forecast-parent-container")
         const coordinates = [];
         console.log('Getting current location...');
         showLoading(); // Show loading screen
